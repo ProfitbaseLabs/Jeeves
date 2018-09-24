@@ -1,0 +1,15 @@
+OS installasjon
+Driver for kamera?
+
+Pi: Kode for å aksessere web camera stream
+Pi: Detektere bevegelse via kamera
+Pi: Detektere ansikt
+Pi: Plukke ut ansikt
+Pi: Sende ansikt(er) til API
+
+Api: Motta request (bilde) fra Pi
+Api: Sende til (Azure) face detection / recognition API
+APi: Dersom ansikt gjenkjent, finn ut persondetaljer
+Api: Svar til Pi
+
+Pi: Vis resultat (Magic Mirror? Web App? Native GUI - GNOME?)
