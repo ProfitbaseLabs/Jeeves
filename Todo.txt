@@ -1,9 +1,10 @@
-OS installasjon
-Driver for kamera?
+OS installasjon         Check
+Driver for kamera?      Check (HP)
 
-Pi: Kode for å aksessere web camera stream
-Pi: Detektere bevegelse via kamera
-Pi: Detektere ansikt
+Pi: Kode for å aksessere web camera stream  Check (Motion)
+Pi: Detektere bevegelse via kamera          Check (Motion)
+Pi: Detektere ansikt                        Check (OpenCV / Python)
+Pi: Koble OpenCV opp mot Motion stream
 Pi: Plukke ut ansikt
 Pi: Sende ansikt(er) til API
 
