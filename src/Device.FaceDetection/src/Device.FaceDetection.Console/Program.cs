@@ -5,24 +5,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Linq;
 
 namespace Device.FaceDetection
 {
     class Program
     {
-        const string SubscriptionKey = "TODO: Add Key"; // Key 1 or Key 2 from the Face API, not the subscription id
+        const string SubscriptionKey = ""; // Key 1 or Key 2 from the Face API, not the subscription id
         const string FaceEndpoint = "https://northeurope.api.cognitive.microsoft.com";
+        //const string PersonGroupId = "pblabs";
 
         static void Main(string[] args)
         {
+            List<Person> allPersons = new List<Person>();
+
             FaceClient faceClient = new FaceClient(new ApiKeyServiceClientCredentials(SubscriptionKey), new DelegatingHandler[] { });
             faceClient.Endpoint = FaceEndpoint;
-
+            var allPersonGroups = faceClient.PersonGroup.ListAsync().GetAwaiter().GetResult();
+            
+            foreach (var personGroup in allPersonGroups)
+            {
+                var persons = faceClient.PersonGroupPerson.ListAsync(personGroup.PersonGroupId).GetAwaiter().GetResult();
+                allPersons.AddRange(persons);
+            }
+            
             var capture = new VideoCapture(0); // Specifies the camera unit (by index)
             //var capture = new VideoCapture("http://172.25.95.176:8081"); // Stream from Pi
 
             var classifier = new CascadeClassifier("haarcascade_frontalface_default.xml");
-            int snapshotInterval = 1000; // Take one snapshot from the video feed every x milliseconds
+            int snapshotInterval = 3000; // Take one snapshot from the video feed every x milliseconds
 
             using (var window = new Window("capture"))
             {
@@ -37,9 +48,7 @@ namespace Device.FaceDetection
 
                     var (faceDetected, faceMat) = DetectFace(classifier, image);
                     window.ShowImage(faceMat);
-
-                    //var faceDetected = ImageContainsFaces(image, classifier);
-
+                    
                     if (faceDetected)
                     {
                         using (var stream = new MemoryStream())
@@ -57,10 +66,54 @@ namespace Device.FaceDetection
                                     FaceAttributeType.Smile
                                 }).GetAwaiter().GetResult();
 
-                            foreach (var detectedFace in detectionResult)
-                            {
-                                Console.WriteLine($"We detected someone. They are {detectedFace.FaceAttributes.Gender.GetValueOrDefault(Gender.Genderless)}, at age {detectedFace.FaceAttributes.Age} and {detectedFace.FaceAttributes.Smile} happy");
+                            if (detectionResult.Count > 0)
+                            {                                
+                                var faceIds = detectionResult.Where(c => c.FaceId.HasValue).Select(c => c.FaceId.Value).ToList();
+                                IList<IdentifyResult> identificationResults = null;
+                                foreach (var personGroup in allPersonGroups)
+                                {
+                                    try
+                                    {
+                                        
+                                        identificationResults = faceClient.Face.IdentifyAsync(faceIds, personGroup.PersonGroupId).GetAwaiter().GetResult();
+                                        if (identificationResults.Count > 0)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Seems to crash if the specified person group id does not contain the requsted faces...which should be a totally legal
+                                        // request to make, so lets ugly-bitch-hack-choke the exception
+                                    }
+                                }
+                                
+                                foreach (var identificationResult in identificationResults ?? Enumerable.Empty<IdentifyResult>())
+                                {
+                                    var identifiedPerson = (from p in allPersons
+                                                           from c in identificationResult.Candidates
+                                                           where p.PersonId == c.PersonId
+                                                           select p).FirstOrDefault();
+
+                                    if (identifiedPerson != null)
+                                    {
+                                        Console.WriteLine($"We identified {identifiedPerson.Name}");
+                                    }                                    
+                                }
+
+                                //foreach (var detectedFace in detectionResult)
+                                //{
+                                //    Console.WriteLine($"We detected someone. They are {detectedFace.FaceAttributes.Gender.GetValueOrDefault(Gender.Genderless)}, at age {detectedFace.FaceAttributes.Age} and {detectedFace.FaceAttributes.Smile} happy");
+
+                                //}
+
                             }
+                                                        
+                            //foreach (var detectedFace in detectionResult)
+                            //{
+                            //    Console.WriteLine($"We detected someone. They are {detectedFace.FaceAttributes.Gender.GetValueOrDefault(Gender.Genderless)}, at age {detectedFace.FaceAttributes.Age} and {detectedFace.FaceAttributes.Smile} happy");
+
+                            //}
                         }
                     }
 
