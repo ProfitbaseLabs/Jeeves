@@ -2,6 +2,7 @@
 using ImageCMS.DomainModel.Responses;
 using ImageCMS.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ImageCMS.WebApp.Controllers
@@ -17,6 +18,12 @@ namespace ImageCMS.WebApp.Controllers
         {
             _context = context;
             _service = new ConfigurationService(_context);
+        }
+
+        [HttpGet("all")]
+        public async Task<List<Person>> GetAllPersons()
+        {
+            return await _service.GetAllPersons();
         }
 
         [HttpGet("{id}")]

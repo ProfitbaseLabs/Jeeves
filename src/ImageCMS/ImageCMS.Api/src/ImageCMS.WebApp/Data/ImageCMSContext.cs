@@ -11,5 +11,6 @@ namespace ImageCMS.WebApp.Models
         }
 
         public DbSet<Person> Person { get; set; }
+        public DbSet<Group> Group { get; set; }
     }
 }

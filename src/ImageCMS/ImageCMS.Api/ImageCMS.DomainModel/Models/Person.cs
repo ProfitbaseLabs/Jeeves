@@ -4,14 +4,14 @@ namespace ImageCMS.DomainModel.Models
 {
     public enum Gender
     {
-        Male,
-        Female
+        Male = 0,
+        Female = 1
     }
 
     public class Person
     {
         public string GroupId { get; set; }
-        public string PersonId { get; set; }
+        public Guid PersonId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Gender Gender { get; set; }
