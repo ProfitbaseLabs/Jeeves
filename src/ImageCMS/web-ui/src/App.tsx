@@ -1,18 +1,23 @@
 import * as React from 'react';
 import './App.css';
 
-import logo from './logo.svg';
+
+import { PersonGroups } from './components/personGroups/personGroups.component';
+import { Header } from './components/header/headerComponent';
+import { Switch, Route } from 'react-router-dom';
+import { PersonGroup } from './components/personGroup/personGroup.component';
 
 class App extends React.Component {
   public render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
+        <Header/>
         <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
+          <Switch>            
+              <Route exact={true} path='/' component={PersonGroups} />
+              <Route path='/personGroups' component={PersonGroups} />
+              <Route path='/personGroup/:id' component={PersonGroup} />              
+          </Switch>
         </p>
       </div>
     );
