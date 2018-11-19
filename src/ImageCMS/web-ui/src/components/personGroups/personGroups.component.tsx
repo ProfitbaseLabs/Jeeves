@@ -1,39 +1,45 @@
 import * as React from 'react';
 import { PersonGroupEntity } from '../../domain/personGroupEntity';
-import { withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
-interface PersonGroupsState{
-    personGroups : PersonGroupEntity[];
+interface PersonGroupsState {
+    personGroups: PersonGroupEntity[];
 }
 
-export class PersonGroups extends React.Component<any,PersonGroupsState>{
-    
-    constructor(props : any){
+export class PersonGroups extends React.Component<any, PersonGroupsState>{
+
+    constructor(props: any) {
         super(props);
 
         this.state = {
-            personGroups : [{
-                id : 'id_124',
-                name : 'Ansatte'
+            personGroups: [{
+                id: 'id_124',
+                name: 'Ansatte'
             },
             {
-                id : 'id_125',
-                name : 'Gjester'
+                id: 'id_125',
+                name: 'Gjester'
             }]
         };
     }
 
-    public render(){
+    public render() {
         const listItems = this.state.personGroups.map(group => <li onClick={this.groupClicked.bind(this, group)} key={group.id}>{group.name}</li>);
-        return(
+        return (
+            <div>
+                <div>
+                    <button>Add Person Group</button>
+                </div>
                 <ul>
                     {listItems}
                 </ul>
-            );
+            </div>
+
+        );
     }
-    
-    private groupClicked(group : PersonGroupEntity){
-        this.props.history.push(`/personGroup/${group.id}`);        
+
+    private groupClicked(group: PersonGroupEntity) {
+        this.props.history.push(`/personGroup/${group.id}`);
     }
 }
 

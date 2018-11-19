@@ -1,5 +1,8 @@
 .App {
+  height: 100%;
   text-align: center;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .App-logo {
@@ -20,6 +23,15 @@
 
 .App-intro {
   font-size: large;
+}
+
+.app-nav-container > ul{
+  height:100%;
+}
+
+.app-nav-container > ul > li{
+  text-align: left;
+  margin-left: 10px;
 }
 
 @keyframes App-logo-spin {
