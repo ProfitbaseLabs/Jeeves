@@ -41,7 +41,9 @@ class Nav extends React.Component<any, NavState>{
         node.active = true;
         if (node.children && node.children.length) {
             node.toggled = toggled;
-        } else if (node instanceof PersonGroupNode) {
+        } 
+        
+        if (node instanceof PersonGroupNode) {
             node.children = await this.getPersons(node.id);
             node.toggled = toggled;
             this.props.history.push(`/personGroup/${node.id}`);
